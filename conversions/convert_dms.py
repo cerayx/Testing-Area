@@ -2,9 +2,10 @@ import LatLon
 
 
 def main(data):
-    for x, y in data:
-        new = LatLon.string2latlon(x, y, 'd% %m% %S% %H')
-        print new.to_string('d%_%M')
+    for x in data:
+
+      new = LatLon.string2latlon(x[0], x[1], 'd% %M% %H')
+      print new.to_string('d%_%M')
 
 
 if __name__ == '__main__':
@@ -37,4 +38,8 @@ if __name__ == '__main__':
                    (u'35 05.25912N', u'089 51.62988W'),
                    (u'35 05.18725N', u'089 51.64329W'),
                    (u'35 05.22579N', u'089 51.60721W'))
-    main(coordinates)
+    coordinates2 = ([u'35 04.79830 N', u'089 52.16253 W'], [u'35 05.22579 N', u'089 51.60721 W'])
+    main(coordinates2)
+
+# new = LatLon.string2latlon(u'35 04.79830 N', u'089 52.16253 W', 'd% %M% %H')
+# print new.to_string('d%u\00B0%M')

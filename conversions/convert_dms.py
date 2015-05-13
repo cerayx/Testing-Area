@@ -1,11 +1,18 @@
+# -*- coding: utf-8 -*-
 import LatLon
 
 
-def main(data):
-    for x in data:
+def coordinate_format(elements):
+    yield ('{} {}'.format(elements[0][:-1], elements[0][-1]),
+           '{} {}'.format(elements[1][:-1], elements[1][-1]))
 
-      new = LatLon.string2latlon(x[0], x[1], 'd% %M% %H')
-      print new.to_string('d%_%M')
+
+def main(data):
+    for x, y in coordinate_format(data):
+        new = LatLon.string2latlon(x, y, 'd% %M% %H')
+        z = new.to_string('d%_%M')
+        b = [str.encode("utf-8").replace('_', u"\u00b0") for str in z]
+        print b
 
 
 if __name__ == '__main__':
@@ -38,8 +45,6 @@ if __name__ == '__main__':
                    (u'35 05.25912N', u'089 51.62988W'),
                    (u'35 05.18725N', u'089 51.64329W'),
                    (u'35 05.22579N', u'089 51.60721W'))
-    coordinates2 = ([u'35 04.79830 N', u'089 52.16253 W'], [u'35 05.22579 N', u'089 51.60721 W'])
-    main(coordinates2)
 
-# new = LatLon.string2latlon(u'35 04.79830 N', u'089 52.16253 W', 'd% %M% %H')
-# print new.to_string('d%u\00B0%M')
+    for i in coordinates:
+        main(i)

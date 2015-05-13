@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import math
 '''
 Given a Degrees Decimal Minutes coordinate such as -90°03.11202W, convert it to a number of decimal degrees using the following method:
     (1) The integer number of degrees is the same (90)
@@ -15,9 +16,11 @@ from left to right in string:
     (5) convert directional to an apostrophe sign (') '''
 
 def main(x):
-    z = str(x[1]).split('.')
+    decimal, degree = math.modf(x[1])
+    y = abs(round((decimal*60), 3))
 
-    print z
+
+    print "{}° {}'".format(int(degree),y)
 
 if __name__ == '__main__':
     coordinates = ((35.1559396703, -90.051861154),

@@ -1,34 +1,50 @@
-# -*- coding: utf-8 -*-
+# coding=utf-8
+import pyproj
 import math
-import pprint
+import os
+
+def main(*coordinates):
+    '''
+    Purpose: Convert TN State Plane to degrees minitues sceconds.
+    name: main()
+    Parameters: main(lattitude, longitiude)
+    '''
+    def dms(element):
+        decimal, degree = math.modf(element)
+        decimal_min = abs(round((decimal * 60), 3))
+        sign = u"\u00B0"
+        return u"{}{} {}'".format(int(degree), sign, decimal_min)
+    try:
+        projections = {'WGS1984': pyproj.Proj("+init=EPSG:4326"),
+                       'STATE': pyproj.Proj("+init=ESRI:102736", coordinates)}
+        x, y = pyproj.transform(projections['STATE'],
+                                projections['WGS1984'], *coordinates)
+        return dms(x), dms(y)
+    except ImportError:
+        print 'Please install pyproj'
 
 
-class MyPrettyPrinter(pprint.PrettyPrinter):
-
-    def format(self, object, context, maxlevels, level):
-        if isinstance(object, unicode):
-            return (object.encode('utf8'), True, False)
-        return pprint.PrettyPrinter.format(self, object, context,
-                                           maxlevels, level)
-
-
-def main(element):
-    decimal, degree = math.modf(element)
-    decimal_min = abs(round((decimal * 60), 3))
-    sign = u"\u00B0"
-    return u"{}{} {}'".format(int(degree), sign, decimal_min)
-
+def test():
+    points = ((819145.000051, 287838.250172),
+              (757603.549971, 324495.6575),
+              (774683.966926, 321640.753433),
+              (841840.180382, 281230.999935),
+              (764588.210215, 284146.74312))
+    for x, y in points:
+        print main(x, y)
 
 if __name__ == '__main__':
-    coordinates = ((35.1559396703, -90.051861154),
-                   (35.1556006047, -90.0452734708),
-                   (35.1254266667, -89.9593513438),
-                   (35.0620946957, -89.8413049881),
-                   (35.0468400814, -90.0242124181),
-                   (35.0463786042, -89.7646810742),
-                   (35.1345278453, -90.0575200378),
-                   (35.0979580489, -89.8516395905))
-    for i in coordinates:
-        print(map(main, i))
-        MyPrettyPrinter().pprint(map(main, i))
-        # verify output
+    try:
+        import arcpy
+        address_data = os.path.join(r'C:\Users\carlt\Documents\ArcGIS'
+                                    r'\Default.gdb', 'SHELBY', 'FIVE')
+
+        with arcpy.da.UpdateCursor(address_data,
+                                   ['SHAPE@X', 'SHAPE@Y', 'LON', 'LAT']) as cur:
+            for row in cur:
+                print main(row[0], row[1])
+                row[2], row[3] = main(row[0], row[1])
+                cur.updateRow(row)
+    except ImportError, e:
+        test()
+        print 'arcpy not detected'

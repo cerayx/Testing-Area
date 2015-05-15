@@ -5,7 +5,7 @@ import os
 
 def main(*coordinates):
     '''
-    Purpose: Convert TN State Plane to degrees minitues sceconds.
+    Purpose: Convert TN State Plane to degrees minutes sceconds.
     name: main()
     Parameters: main(lattitude, longitiude)
     '''
